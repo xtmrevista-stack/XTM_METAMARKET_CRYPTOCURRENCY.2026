@@ -1,0 +1,2 @@
+# XTM_METAMARKET_CRYPTOCURRENCY.2026
+XTM_METAMARKET_Dashboard de Precios de Criptomonedas de ENERO de 2026
