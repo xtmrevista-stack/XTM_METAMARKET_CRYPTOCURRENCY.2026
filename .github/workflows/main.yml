@@ -1,0 +1,26 @@
+name: Actualizacion Diaria Bitcoin
+on:
+  schedule:
+    - cron: '0 12 * * *' # 6:00 AM CDMX aprox
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+      - name: Install dependencies
+        run: pip install pandas requests openpyxl pytz jinja2
+      - name: Run script
+        run: python actualizar_precios.py
+      - name: Commit and Push
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add BITCOIN_REPORTE_DIARIO.xlsx
+          git commit -m "Excel actualizado" || echo "No hay cambios"
+          git push
