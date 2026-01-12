@@ -1,26 +1,24 @@
-name: Actualizacion Diaria Bitcoin
+name: XTM_Auto_Update
 on:
   schedule:
-    - cron: '0 12 * * *' # 6:00 AM CDMX aprox
+    - cron: '*/15 * * * *'
   workflow_dispatch:
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Setup Python
-        uses: actions/setup-python@v5
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
         with:
-          python-version: '3.10'
-      - name: Install dependencies
-        run: pip install pandas requests openpyxl pytz jinja2
-      - name: Run script
+          python-version: '3.9'
+      - name: Instalacion
+        run: pip install pandas requests plotly pytz
+      - name: Calculo
         run: python actualizar_precios.py
-      - name: Commit and Push
+      - name: Publicar
         run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git add BITCOIN_REPORTE_DIARIO.xlsx
-          git commit -m "Excel actualizado" || echo "No hay cambios"
+          git config --global user.name "XTM-Bot"
+          git config --global user.email "bot@xtm.com"
+          git add index.html
+          git commit -m "Update" || exit 0
           git push
