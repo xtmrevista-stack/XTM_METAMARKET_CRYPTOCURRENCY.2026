@@ -11,14 +11,14 @@ jobs:
       - uses: actions/setup-python@v2
         with:
           python-version: '3.9'
-      - name: Instalacion
+      - name: Instalacion de Herramientas  # <--- AQUÍ ES EL CAMBIO
         run: pip install pandas requests plotly pytz
-      - name: Calculo
+      - name: Calculo Matemático
         run: python actualizar_precios.py
-      - name: Publicar
+      - name: Publicar en la Web
         run: |
           git config --global user.name "XTM-Bot"
           git config --global user.email "bot@xtm.com"
           git add index.html
-          git commit -m "Update" || exit 0
+          git commit -m "Actualización visual XTM" || exit 0
           git push
