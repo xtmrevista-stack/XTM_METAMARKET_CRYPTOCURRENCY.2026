@@ -12,7 +12,7 @@ jobs:
         with:
           python-version: '3.9'
       - name: Instalacion de Herramientas  # <--- AQUÍ ES EL CAMBIO
-        run: pip install pandas requests plotly pytz
+        run: pip install pandas requests plotly pytz supabase
       - name: Calculo Matemático
         run: python actualizar_precios.py
       - name: Publicar en la Web
