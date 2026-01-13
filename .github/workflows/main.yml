@@ -1,24 +1,36 @@
 name: XTM_Auto_Update
+
 on:
   schedule:
-    - cron: '*/15 * * * *'
-  workflow_dispatch:
+    - cron: '*/15 * * * *'  # Se ejecuta cada 15 minutos
+  workflow_dispatch:        # Permite ejecutarlo manualmente
+
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-python@v2
+      - name: Checkout del codigo
+        uses: actions/checkout@v2
+
+      - name: Configurar Python
+        uses: actions/setup-python@v2
         with:
           python-version: '3.9'
-      - name: Instalacion de Herramientas  # <--- AQUÍ ES EL CAMBIO
-        run: pip install pandas requests plotly pytz supabase
-      - name: Calculo Matemático
+
+      - name: Instalacion de Herramientas
+        run: |
+          pip install pandas requests plotly pytz supabase
+
+      - name: Ejecutar Sabios Robots
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
         run: python actualizar_precios.py
+
       - name: Publicar en la Web
         run: |
           git config --global user.name "XTM-Bot"
           git config --global user.email "bot@xtm.com"
           git add index.html
-          git commit -m "Actualización visual XTM" || exit 0
+          git commit -m "Actualización visual y memoria activa XTM" || exit 0
           git push
