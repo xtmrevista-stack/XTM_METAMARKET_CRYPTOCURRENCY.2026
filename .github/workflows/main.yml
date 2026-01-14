@@ -1,9 +1,9 @@
-name: XTM_Auto_Update
+name: XTM_Memoria_Interna
 
 on:
   schedule:
-    - cron: '*/15 * * * *'  # Se ejecuta cada 15 minutos
-  workflow_dispatch:        # Permite ejecutarlo manualmente
+    - cron: '*/15 * * * *'
+  workflow_dispatch:
 
 jobs:
   build:
@@ -17,20 +17,16 @@ jobs:
         with:
           python-version: '3.9'
 
-      - name: Instalacion de Herramientas
-        run: |
-          pip install pandas requests plotly pytz supabase
+      - name: Instalar Librerias
+        run: pip install pandas requests pytz
 
-      - name: Ejecutar Sabios Robots
-        env:
-          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+      - name: Ejecutar Robot y Guardar Memoria
         run: python actualizar_precios.py
 
-      - name: Publicar en la Web
+      - name: Guardar Cambios en GitHub
         run: |
-          git config --global user.name "XTM-Bot"
+          git config --global user.name "XTM-Robot"
           git config --global user.email "bot@xtm.com"
-          git add index.html
-          git commit -m "Actualización visual y memoria activa XTM" || exit 0
+          git add historial.csv index.html
+          git commit -m "Robot: Nueva memoria guardada [skip ci]" || exit 0
           git push
