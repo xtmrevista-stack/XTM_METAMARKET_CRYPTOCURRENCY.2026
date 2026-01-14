@@ -11,9 +11,11 @@ supabase: Client = create_client(url, key)
 
 def obtener_datos():
     try:
+        # Obtenemos precio de Bitcoin
         r = requests.get("https://api.binance.com/api/v3/ticker/24hr?symbol=BTCUSDT", timeout=10).json()
         return float(r['lastPrice']), float(r['priceChangePercent'])
-    except:
+    except Exception as e:
+        print(f"Error API: {e}")
         return 0.0, 0.0
 
 def generar_dashboard():
@@ -21,28 +23,29 @@ def generar_dashboard():
     ahora = datetime.now(tz_mx).strftime('%Y-%m-%d %H:%M:%S')
     precio, var = obtener_datos()
 
-    r1 = "✅ COMPRA" if var < -1 else "⚠️ ESPERA"
-    r2 = "😐 CALMA" if var > -3 else "😨 MIEDO"
-    consejo = f"R1:{r1} | R2:{r2}"
+    consejo = "COMPRA" if var < -1 else "ESPERA"
 
-    # --- EL CAMBIO CRUCIAL ---
     if precio > 0:
-        data = {
+        # Preparamos los datos EXACTAMENTE como tus columnas en Supabase
+        datos_para_supabase = {
             "moneda": "BTC",
             "precio": precio,
             "fuente": "Binance",
             "consejo_robot": consejo
         }
+        
         try:
-            # Asegúrate de que el nombre sea 'historial_precios' como en tu imagen
-            supabase.table("historial_precios").insert(data).execute()
-            print(">>> EXITO: Fila insertada en Supabase <<<")
+            # ENVIAR A SUPABASE (Nombre de tabla: historial_precios)
+            resultado = supabase.table("historial_precios").insert(datos_para_supabase).execute()
+            print(f"¡DATOS ENVIADOS! Respuesta: {resultado}")
         except Exception as e:
-            print(f"Error de inserción: {e}")
+            print(f"ERROR AL ENVIAR A SUPABASE: {e}")
 
-    # --- WEB ---
+    # Actualizar la web para GitHub Pages
     with open("index.html", "w", encoding="utf-8") as f:
-        f.write(f"<h1>BTC: ${precio:,.2f}</h1><p>{consejo}</p><small>{ahora}</small>")
+        f.write(f"<html><body style='background:black;color:gold;text-align:center;'>")
+        f.write(f"<h1>BTC: ${precio:,.2f}</h1><p>{consejo}</p><p>{ahora}</p>")
+        f.write(f"</body></html>")
 
 if __name__ == "__main__":
     generar_dashboard()
