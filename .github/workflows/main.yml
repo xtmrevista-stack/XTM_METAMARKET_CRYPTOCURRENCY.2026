@@ -1,33 +1,24 @@
-name: XTM_App_Oficial
-
+name: XTM_Pro_Market
 on:
   schedule:
-    - cron: '0 * * * *'     # Se ejecutará exactamente cada hora
-  workflow_dispatch:        # Para que tú lo actives cuando quieras
-
+    - cron: '0 * * * *'
+  workflow_dispatch:
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout del codigo
-        uses: actions/checkout@v2
-
-      - name: Configurar Python
-        uses: actions/setup-python@v2
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
         with:
           python-version: '3.9'
-
-      - name: Instalar Herramientas Profesionales
-        run: |
-          pip install pandas requests pytz plotly
-
-      - name: Ejecutar Cerebro XTM
+      - name: Instalar Dependencias
+        run: pip install pandas requests pytz
+      - name: Ejecutar XTM
         run: python actualizar_precios.py
-
-      - name: Publicar Cambios en la Web
+      - name: Desplegar
         run: |
-          git config --global user.name "XTM-Robot"
+          git config --global user.name "XTM-Bot"
           git config --global user.email "bot@xtm.com"
-          git add index.html historico_total.csv
-          git commit -m "XTM: Actualización de Mercado y Consejos [skip ci]" || exit 0
+          git add index.html
+          git commit -m "XTM Pro Update" || exit 0
           git push
